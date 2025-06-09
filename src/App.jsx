@@ -118,7 +118,7 @@ const App = () => {
         ))}
       </div>
 
-      <p className='mb-2 font-semibold text-xl'>#N36#502#580</p>
+      <p className='mb-2 font-semibold text-xl'>#N72#022#177###P/L/I/N#</p>
 
       <div className='gap-3 grid grid-cols-3 w-full mb-5'>
         {playerProgress.map(player => (
