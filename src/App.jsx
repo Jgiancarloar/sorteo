@@ -105,22 +105,22 @@ const App = () => {
   return (
     <div className='bg-slate-800 min-h-screen text-gray-100 px-4 py-10 flex flex-col items-center w-full'>
       <h1 className='font-black text-2xl uppercase'>Goleas con "20so"</h1>
-      <h2 className='mb-2'>PERÚ VS ECUADOR</h2>
+      <h2 className='mb-2'>APRENDIENDO JUNTOS</h2>
 
-      <div className='mb-2 flex justify-around w-full'>
+      <div className='max-w-2xl mx-auto mb-2 flex justify-around w-full'>
         {premios.map(premio => (
           <div
             key={premio.id}
-            className={`border px-2 font-bold py-2 text-xs rounded-lg ${premio.color}`}
+            className={`border px-2 md:px-4 font-bold py-2 text-xs md:text-xl rounded-lg ${premio.color}`}
           >
             +{premio.name}
           </div>
         ))}
       </div>
 
-      <p className='mb-2 font-semibold text-xl'>#N72#022#177###P/L/I/N#</p>
+      <p className='mb-2 font-semibold text-xl'>#N36#502#580</p>
 
-      <div className='gap-3 grid grid-cols-3 w-full mb-5'>
+      <div className='max-w-2xl mx-auto gap-3 grid grid-cols-3 w-full mb-5'>
         {playerProgress.map(player => (
           <Card
             key={player.id}
@@ -133,7 +133,7 @@ const App = () => {
       <div className='flex flex-col items-center gap-4'>
         <button
           onClick={handleClick}
-          className='bg-gray-100 text-slate-800 h-20 w-20 rounded-full flex items-center justify-center font-bold text-3xl shadow-lg'
+          className='cursor-pointer bg-gray-100 text-slate-800 h-20 w-20 rounded-full flex items-center justify-center font-bold text-3xl shadow-lg'
         >
           {lastNumber || '🎯'}
         </button>

@@ -17,16 +17,18 @@ const Card = ({ player, onClick }) => {
 
   return (
     <div
-      className={`${colorClass} flex flex-col gap-1 p-2 rounded-lg cursor-pointer border-2 ${borderColor} text-slate-800`}
+      className={`${colorClass} flex flex-col gap-1 md:gap-3 p-2 rounded-lg cursor-pointer border-6 ${borderColor} text-slate-800`}
       onClick={onClick}
     >
       <div className='flex items-center gap-1'>
-        <p className='text-sm font-semibold'>{player.id}</p>
-        <p className='text-xs truncate w-full text-left'>{player.name}</p>
+        <p className='text-sm font-semibold md:text-xl'>{player.id}</p>
+        <p className='text-xs truncate w-full text-left md:text-xl'>{player.name}</p>
       </div>
       <div className='flex gap-2'>
         {[...Array(5)].map((_, i) => (
-          <Circle key={i} size={12} fill={i < player.hits ? 'green' : 'transparent'} />
+          <div key={i}>
+            <Circle className='h-full w-full' fill={i < player.hits ? 'green' : 'transparent'} />
+          </div>
         ))}
       </div>
     </div>
