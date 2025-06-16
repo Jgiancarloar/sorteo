@@ -3,10 +3,11 @@ import React from 'react';
 import { Circle } from 'lucide-react';
 
 const prizeColors = {
-  '100': 'bg-yellow-300',
+  '140': 'bg-yellow-300',
+  '100': 'bg-violet-300',
   '50': 'bg-blue-300',
   '20': 'bg-green-300',
-  '10': 'bg-pink-300',
+  
 };
 
 const Card = ({ player, onClick }) => {
