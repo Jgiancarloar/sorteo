@@ -4,13 +4,13 @@ import Card from './components/Card';
 
 const App = () => {
   const premios = [
-    { id: 1, name: '100', color: 'bg-yellow-400' },
-    { id: 2, name: '50', color: 'bg-blue-400' },
+    { id: 1, name: '140', color: 'bg-yellow-400' },
+    { id: 2, name: '100', color: 'bg-blue-400' },
     { id: 3, name: '50', color: 'bg-blue-400' },
-    { id: 4, name: '20', color: 'bg-green-400' },
+    { id: 4, name: '50', color: 'bg-green-400' },
     { id: 5, name: '20', color: 'bg-green-400' },
-    { id: 6, name: '10', color: 'bg-red-400' },
-    { id: 7, name: '10', color: 'bg-red-400' },
+    { id: 6, name: '20', color: 'bg-red-400' },
+    { id: 7, name: '20', color: 'bg-red-400' },
   ];
 
   const generateInitialPlayers = () => {
@@ -104,9 +104,7 @@ const App = () => {
 
   return (
     <div className='bg-slate-800 min-h-screen text-gray-100 px-4 py-10 flex flex-col items-center w-full'>
-      <h1 className='font-black text-2xl uppercase'>Goleas con "20so"</h1>
-      <h2 className='mb-2'>APRENDIENDO JUNTOS</h2>
-
+      <h1 className='font-black text-2xl uppercase'>Goleas con "30so"</h1>
       <div className='max-w-2xl mx-auto mb-2 flex justify-around w-full'>
         {premios.map(premio => (
           <div
@@ -118,7 +116,7 @@ const App = () => {
         ))}
       </div>
 
-      <p className='mb-2 font-semibold text-xl'>#N36#502#580</p>
+      <p className='mb-2 font-semibold text-xl'>#N72#022#177---PL1N</p>
 
       <div className='max-w-2xl mx-auto gap-3 grid grid-cols-3 w-full mb-5'>
         {playerProgress.map(player => (
