@@ -5,12 +5,12 @@ import Card from './components/Card';
 const App = () => {
   const premios = [
     { id: 1, name: '140', color: 'bg-yellow-400' },
-    { id: 2, name: '100', color: 'bg-blue-400' },
+    { id: 2, name: '100', color: 'bg-violet-400' },
     { id: 3, name: '50', color: 'bg-blue-400' },
-    { id: 4, name: '50', color: 'bg-green-400' },
+    { id: 4, name: '50', color: 'bg-blue-400' },
     { id: 5, name: '20', color: 'bg-green-400' },
-    { id: 6, name: '20', color: 'bg-red-400' },
-    { id: 7, name: '20', color: 'bg-red-400' },
+    { id: 6, name: '20', color: 'bg-green-400' },
+    { id: 7, name: '20', color: 'bg-green-400' },
   ];
 
   const generateInitialPlayers = () => {
