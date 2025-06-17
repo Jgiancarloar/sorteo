@@ -13,7 +13,7 @@ const ModalCard = ({ setOpenModal, selectedCard, setCards }) => {
                     ? { ...card, nombre, pago }
                     : card
             );
-            localStorage.setItem('cards', JSON.stringify(updatedCards));
+            localStorage.setItem('bingo_cards', JSON.stringify(updatedCards));
             return updatedCards;
         });
         setOpenModal(false);

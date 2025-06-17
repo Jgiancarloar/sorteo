@@ -6,14 +6,14 @@ const Card = ({ data, setOpenModal, setSelectedCard }) => {
 
   return (
     <button
-      className="border-6 border-blue-100 cursor-pointer relative"
+      className={`border-6 ${pago?'border-yellow-500':'border-blue-100'} cursor-pointer relative`}
       onClick={() => {
         setSelectedCard(data);
         setOpenModal(true);
       }}
     >
       <div className="border-[3px] border-blue-950/80">
-        <div className={`${pago ? 'bg-yellow-400/50' : 'bg-blue-950/80'} flex h-12 justify-center relative w-full`}>
+        <div className={`bg-blue-950/80 flex h-12 justify-center relative w-full`}>
           {/* ⭐ Estrellas */}
           <div className='absolute flex flex-col z-10 left-0 px-1'>
             {Array.from({ length: 5 }).map((_, i) => (

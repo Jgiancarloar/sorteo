@@ -3,17 +3,15 @@ import Card from './components/Card';
 import backgroundImg from './assets/background.webp';
 import ModalCard from './components/ModalCard';
 import { Gift, Dice5, RefreshCcw, Tickets } from 'lucide-react';
-import { Random, MersenneTwister19937 } from 'random-js';
 
 const weightedRandom = (items, weightFn) => {
   const weights = items.map(weightFn);
   const total = weights.reduce((acc, w) => acc + w, 0);
   const r = Math.random() * total;
   let acc = 0;
-
   for (let i = 0; i < items.length; i++) {
     acc += weights[i];
-    if (r < acc) return items[i].id; // Retorna solo el ID como hacía antes
+    if (r < acc) return items[i].id;
   }
 };
 
@@ -25,6 +23,8 @@ const App = () => {
   const [selectedCard, setSelectedCard] = useState(null);
   const [bolilla, setBolilla] = useState(null);
   const [historialBolilla, setHistorialBolilla] = useState([]);
+  const [animating, setAnimating] = useState(false);
+  const [animatedDice, setAnimatedDice] = useState(false)
 
   useEffect(() => {
     const stored = localStorage.getItem('bingo_cards');
@@ -64,45 +64,59 @@ const App = () => {
     }
 
     const ultimos = historialBolilla.slice(-2);
-
     const candidatos = tarjetasDisponibles
       .filter(card => !ultimos.includes(card.id))
-      .map(card => ({
-        id: card.id,
-        peso: Math.max(1, 6 - card.estrellas),
-      }));
+      .map(card => ({ id: card.id, peso: Math.max(1, 6 - card.estrellas) }));
 
-    const pool = candidatos.length > 0 ? candidatos : tarjetasDisponibles.map(c => ({
-      id: c.id,
-      peso: 1,
-    }));
+    const pool = candidatos.length > 0
+      ? candidatos
+      : tarjetasDisponibles.map(c => ({ id: c.id, peso: 1 }));
 
     const elegido = weightedRandom(pool, c => c.peso);
 
-    setBolilla(elegido);
-    setHistorialBolilla(prev => [...prev.slice(-4), elegido]);
+    // Animación de conteo rápido
+    setAnimating(true);
+    let counter = 0;
+    const interval = setInterval(() => {
+      const random = Math.floor(Math.random() * 15) + 1;
+      setBolilla(random);
+      counter++;
+      if (counter >= 20) {
+        clearInterval(interval);
+        setBolilla(elegido);
+        setAnimating(false);
+        setHistorialBolilla(prev => [...prev.slice(-4), elegido]);
 
-    setCards(prevCards => {
-      const actualizadas = [...prevCards];
-      const idx = actualizadas.findIndex(c => c.id === elegido);
+        setCards(prevCards => {
+          const actualizadas = [...prevCards];
+          const idx = actualizadas.findIndex(c => c.id === elegido);
 
-      if (idx !== -1) {
-        const card = actualizadas[idx];
-        const nuevasEstrellas = Math.min(card.estrellas + 1, 5);
-        const yaGano = nuevasEstrellas === 5;
-        const premiados = actualizadas.filter(c => c.premio !== null).length;
+          if (idx !== -1) {
+            const card = actualizadas[idx];
+            const nuevasEstrellas = Math.min(card.estrellas + 1, 5);
+            const yaGano = nuevasEstrellas === 5;
+            const premiados = actualizadas.filter(c => c.premio !== null).length;
 
-        actualizadas[idx] = {
-          ...card,
-          estrellas: nuevasEstrellas,
-          premio: yaGano && card.premio === null && premiados < premios.length
-            ? premios[premiados]
-            : card.premio,
-        };
+            actualizadas[idx] = {
+              ...card,
+              estrellas: nuevasEstrellas,
+              premio: yaGano && card.premio === null && premiados < premios.length
+                ? premios[premiados]
+                : card.premio,
+            };
+          }
+
+          return actualizadas;
+        });
       }
+    }, 20);
+  };
 
-      return actualizadas;
-    });
+  const handleDice = () => {
+    setAnimatedDice(true);
+    setTimeout(() => {
+      setAnimatedDice(false);
+    }, 20); // 0.2 segundo
   };
 
   return (
@@ -126,14 +140,14 @@ const App = () => {
             <div key={index} className='flex flex-col items-center'>
               <div
                 className={`h-8 w-8 ${premio >= 100
-                    ? 'text-yellow-500'
-                    : premio >= 50
-                      ? 'text-red-500'
-                      : premio >= 40
-                        ? 'text-green-500'
-                        : premio >= 30
-                          ? 'text-violet-500'
-                          : 'text-gray-400'
+                  ? 'text-yellow-500'
+                  : premio >= 50
+                    ? 'text-red-500'
+                    : premio >= 40
+                      ? 'text-green-500'
+                      : premio >= 30
+                        ? 'text-violet-500'
+                        : 'text-gray-400'
                   }`}
               >
                 <Gift className='h-full w-full' color="currentColor" />
@@ -162,8 +176,12 @@ const App = () => {
             </span>
           </div>
           <button
-            className='bg-blue-950 h-14 p-2 rounded-xl w-14'
-            onClick={sortearNumero}
+            className={` h-14 p-2 rounded-xl w-14 ${animatedDice ? 'bg-blue-900' : 'bg-blue-950'}`}
+            onClick={() => {
+              sortearNumero(),
+                handleDice()
+            }}
+            disabled={animating}
           >
             <Dice5 className='h-full text-white w-full' strokeWidth={1.5} />
           </button>
