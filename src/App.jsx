@@ -1,195 +1,190 @@
-// App.jsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Card from './components/Card';
+import backgroundImg from './assets/background.webp';
+import ModalCard from './components/ModalCard';
+import { Gift, Dice5, RefreshCcw, Tickets } from 'lucide-react';
+import { Random, MersenneTwister19937 } from 'random-js';
+
+const weightedRandom = (items, weightFn) => {
+  const weights = items.map(weightFn);
+  const total = weights.reduce((acc, w) => acc + w, 0);
+  const r = Math.random() * total;
+  let acc = 0;
+
+  for (let i = 0; i < items.length; i++) {
+    acc += weights[i];
+    if (r < acc) return items[i].id; // Retorna solo el ID como hacía antes
+  }
+};
 
 const App = () => {
-  const premios = [
-    { id: 1, name: '140', color: 'bg-yellow-400' },
-    { id: 2, name: '100', color: 'bg-violet-400' },
-    { id: 3, name: '50', color: 'bg-blue-400' },
-    { id: 4, name: '50', color: 'bg-blue-400' },
-    { id: 5, name: '20', color: 'bg-green-400' },
-    { id: 6, name: '20', color: 'bg-green-400' },
-    { id: 7, name: '20', color: 'bg-green-400' },
-  ];
+  const premios = [100, 50, 50, 50, 50, 40, 30, 30];
 
-  const generateInitialPlayers = () => {
-    return Array.from({ length: 15 }, (_, i) => ({
-      id: i + 1,
-      name: 'Libre',
-      hits: 0,
-      prize: null,
-      colorChoice: null, // <-- nuevo: para almacenar el color personalizado
+  const [cards, setCards] = useState([]);
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedCard, setSelectedCard] = useState(null);
+  const [bolilla, setBolilla] = useState(null);
+  const [historialBolilla, setHistorialBolilla] = useState([]);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('bingo_cards');
+    if (stored) {
+      setCards(JSON.parse(stored));
+    } else {
+      const defaultCards = Array.from({ length: 15 }, (_, i) => ({
+        id: i + 1,
+        nombre: '',
+        pago: false,
+        estrellas: 0,
+        premio: null,
+      }));
+      setCards(defaultCards);
+      localStorage.setItem('bingo_cards', JSON.stringify(defaultCards));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (cards.length > 0) {
+      localStorage.setItem('bingo_cards', JSON.stringify(cards));
+    }
+  }, [cards]);
+
+  const sortearNumero = () => {
+    const tarjetasDisponibles = cards.filter(c => c.estrellas < 5);
+    const ganadores = cards.filter(c => c.estrellas >= 5);
+
+    if (ganadores.length >= 8) {
+      alert('¡Ya salieron los 8 ganadores!');
+      return;
+    }
+
+    if (tarjetasDisponibles.length === 0) {
+      alert('¡No hay más tarjetas disponibles para sortear!');
+      return;
+    }
+
+    const ultimos = historialBolilla.slice(-2);
+
+    const candidatos = tarjetasDisponibles
+      .filter(card => !ultimos.includes(card.id))
+      .map(card => ({
+        id: card.id,
+        peso: Math.max(1, 6 - card.estrellas),
+      }));
+
+    const pool = candidatos.length > 0 ? candidatos : tarjetasDisponibles.map(c => ({
+      id: c.id,
+      peso: 1,
     }));
-  };
 
-  const [playerProgress, setPlayerProgress] = useState(generateInitialPlayers());
-  const [prizeIndex, setPrizeIndex] = useState(0);
-  const [lastNumber, setLastNumber] = useState(null);
-  const [selectedPlayer, setSelectedPlayer] = useState(null);
-  const [editedName, setEditedName] = useState('');
-  const [selectedColor, setSelectedColor] = useState(null); // color elegido en el modal
+    const elegido = weightedRandom(pool, c => c.peso);
 
-  const handleClick = () => {
-    let count = 0;
-    const interval = setInterval(() => {
-      const randomTemp = Math.floor(Math.random() * 15) + 1;
-      setLastNumber(randomTemp);
-      count++;
+    setBolilla(elegido);
+    setHistorialBolilla(prev => [...prev.slice(-4), elegido]);
 
-      if (count >= 15) {
-        clearInterval(interval);
-        const finalNumber = Math.floor(Math.random() * 15) + 1;
-        setLastNumber(finalNumber);
+    setCards(prevCards => {
+      const actualizadas = [...prevCards];
+      const idx = actualizadas.findIndex(c => c.id === elegido);
 
-        const updatedPlayers = [...playerProgress];
-        let newPrizeIndex = prizeIndex;
+      if (idx !== -1) {
+        const card = actualizadas[idx];
+        const nuevasEstrellas = Math.min(card.estrellas + 1, 5);
+        const yaGano = nuevasEstrellas === 5;
+        const premiados = actualizadas.filter(c => c.premio !== null).length;
 
-        const playerIndex = updatedPlayers.findIndex(p => p.id === finalNumber);
-
-        if (playerIndex !== -1) {
-          const player = updatedPlayers[playerIndex];
-
-          if (player.hits < 5) {
-            const newHits = player.hits + 1;
-            let assignedPrize = player.prize;
-
-            if (newHits === 5 && !player.prize && newPrizeIndex < premios.length) {
-              assignedPrize = premios[newPrizeIndex];
-              newPrizeIndex++;
-            }
-
-            updatedPlayers[playerIndex] = {
-              ...player,
-              hits: newHits,
-              prize: assignedPrize
-            };
-          }
-        }
-
-        setPlayerProgress(updatedPlayers);
-        setPrizeIndex(newPrizeIndex);
+        actualizadas[idx] = {
+          ...card,
+          estrellas: nuevasEstrellas,
+          premio: yaGano && card.premio === null && premiados < premios.length
+            ? premios[premiados]
+            : card.premio,
+        };
       }
-    }, 25);
-  };
 
-  const handleReset = () => {
-    setPlayerProgress(generateInitialPlayers());
-    setPrizeIndex(0);
-    setLastNumber(null);
-  };
-
-  const handleCardClick = (player) => {
-    setSelectedPlayer(player);
-    setEditedName(player.name);
-    setSelectedColor(player.colorChoice || null); // cargar color actual en modal
-  };
-
-  const handleSaveName = () => {
-    setPlayerProgress(prev =>
-      prev.map(p =>
-        p.id === selectedPlayer.id
-          ? { ...p, name: editedName, colorChoice: selectedColor }
-          : p
-      )
-    );
-    setSelectedPlayer(null);
-    setSelectedColor(null);
-  };
-
-  // Función para cambiar color seleccionado en modal
-  const handleColorSelect = (color) => {
-    setSelectedColor(color);
+      return actualizadas;
+    });
   };
 
   return (
-    <div className='bg-slate-800 min-h-screen text-gray-100 px-4 py-10 flex flex-col items-center w-full'>
-      <h1 className='font-black text-2xl uppercase'>Goleas con "30so"</h1>
-      <div className='max-w-2xl mx-auto mb-2 flex justify-around w-full'>
-        {premios.map(premio => (
-          <div
-            key={premio.id}
-            className={`border px-2 md:px-4 font-bold py-2 text-xs md:text-xl rounded-lg ${premio.color}`}
-          >
-            +{premio.name}
+    <div className='font-pirataone min-h-screen relative'>
+      <img src={backgroundImg} alt="" className='absolute h-full object-cover object-right w-full' />
+      <div className='bg-black/60 h-full w-full absolute'></div>
+      <div className='max-w-xl mx-auto px-5 py-10 relative z-20'>
+        <div className='flex gap-5 items-center mb-5 text-white'>
+          <div className='flex-1'>
+            <h1 className='text-5xl'>BINGOMANIA</h1>
+            <p className='font-bold font-outfit text-xl'>#N72#022$177--&gt;PL1N</p>
           </div>
-        ))}
-      </div>
-
-      <p className='mb-2 font-semibold text-xl'>#N72#022#177---PL1N</p>
-
-      <div className='max-w-2xl mx-auto gap-3 grid grid-cols-3 w-full mb-5'>
-        {playerProgress.map(player => (
-          <Card
-            key={player.id}
-            player={player}
-            onClick={() => handleCardClick(player)}
-          />
-        ))}
-      </div>
-
-      <div className='flex flex-col items-center gap-4'>
-        <button
-          onClick={handleClick}
-          className='cursor-pointer bg-gray-100 text-slate-800 h-20 w-20 rounded-full flex items-center justify-center font-bold text-3xl shadow-lg'
-        >
-          {lastNumber || '🎯'}
-        </button>
-
-        <button
-          onClick={handleReset}
-          className='bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-bold shadow'
-        >
-          Reiniciar
-        </button>
-      </div>
-
-      {/* Modal */}
-      {selectedPlayer && (
-        <div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50'>
-          <div className='bg-white text-slate-800 p-6 rounded-lg w-72 shadow-xl flex flex-col gap-4'>
-            <h2 className='font-bold text-lg'>Editar Nombre</h2>
-            <input
-              className='border rounded px-2 py-1'
-              value={editedName}
-              onChange={(e) => setEditedName(e.target.value)}
-            />
-
-            {/* Botones de color */}
-            <div className='flex gap-4 mt-4'>
-              {/* Botón blanco */}
-              <button
-                onClick={() => handleColorSelect('white')}
-                className={`w-8 h-8 border rounded ${selectedColor === 'white' ? 'border-gray-800' : 'border-gray-300'}`}
-              >
-                {/* Cuadrado blanco */}
-              </button>
-
-              {/* Botón morado */}
-              <button
-                onClick={() => handleColorSelect('purple')}
-                className={`w-8 h-8 border rounded ${selectedColor === 'purple' ? 'border-gray-800' : 'border-gray-300'} bg-purple-600`}
-              >
-                {/* Cuadrado morado */}
-              </button>
-            </div>
-
-            <div className='flex justify-end gap-2 mt-6'>
-              <button
-                onClick={() => setSelectedPlayer(null)}
-                className='text-sm px-3 py-1 rounded bg-gray-300 hover:bg-gray-400'
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleSaveName}
-                className='text-sm px-3 py-1 rounded bg-blue-600 text-white hover:bg-blue-700'
-              >
-                Guardar
-              </button>
-            </div>
+          <div className='h-20 relative w-20'>
+            <Tickets className='h-full w-full' strokeWidth={1} />
+            <span className='absolute inset-0 flex items-center justify-center mt-4 ml-3 text-xl'>30so</span>
           </div>
         </div>
+
+        <div className='flex justify-around mb-5'>
+          {premios.map((premio, index) => (
+            <div key={index} className='flex flex-col items-center'>
+              <div
+                className={`h-8 w-8 ${premio >= 100
+                    ? 'text-yellow-500'
+                    : premio >= 50
+                      ? 'text-red-500'
+                      : premio >= 40
+                        ? 'text-green-500'
+                        : premio >= 30
+                          ? 'text-violet-500'
+                          : 'text-gray-400'
+                  }`}
+              >
+                <Gift className='h-full w-full' color="currentColor" />
+              </div>
+              <p className='text-white text-xl'>+{premio}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className='gap-1 grid grid-cols-3 mb-5 relative'>
+          {cards.map(card => (
+            <Card
+              key={card.id}
+              data={card}
+              openModal={openModal}
+              setOpenModal={setOpenModal}
+              setSelectedCard={setSelectedCard}
+            />
+          ))}
+        </div>
+
+        <div className='flex gap-5 items-center justify-center'>
+          <div className="bg-[radial-gradient(circle,_rgba(30,64,175,1)_0%,_rgba(2,6,23,1)_80%)] flex h-20 w-20 items-center justify-center rounded-full">
+            <span className="font-black text-white text-5xl">
+              {bolilla !== null ? bolilla : '-'}
+            </span>
+          </div>
+          <button
+            className='bg-blue-950 h-14 p-2 rounded-xl w-14'
+            onClick={sortearNumero}
+          >
+            <Dice5 className='h-full text-white w-full' strokeWidth={1.5} />
+          </button>
+          <button
+            className='bg-blue-950 h-14 p-2 rounded-xl w-14'
+            onClick={() => {
+              localStorage.removeItem('bingo_cards');
+              window.location.reload();
+            }}
+          >
+            <RefreshCcw className='h-full text-white w-full' strokeWidth={1.5} />
+          </button>
+        </div>
+      </div>
+
+      {openModal && selectedCard && (
+        <ModalCard
+          setOpenModal={setOpenModal}
+          selectedCard={selectedCard}
+          setCards={setCards}
+        />
       )}
     </div>
   );

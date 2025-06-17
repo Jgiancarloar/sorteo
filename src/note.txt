@@ -1,0 +1,270 @@
+import React, { useEffect, useState } from 'react';
+import Card from './components/Card';
+import backgroundImg from './assets/background.webp'
+import ModalCard from './components/ModalCard';
+import { Gift, Dice5, RefreshCcw, Tickets } from 'lucide-react'
+
+const App = () => {
+
+  const premios = [100, 50, 50, 50, 50, 40, 30, 30];
+
+  const [cards, setCards] = useState([]);
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedCard, setSelectedCard] = useState(null); // Para saber cuál se está editando
+
+  // 🧠 Estado inicial
+  useEffect(() => {
+    const stored = localStorage.getItem('bingo_cards');
+    if (stored) {
+      setCards(JSON.parse(stored));
+    } else {
+      const defaultCards = Array.from({ length: 15 }, (_, i) => ({
+        id: i + 1,
+        nombre: '',
+        pago: false,
+        estrellas: 0,
+        premio: null,
+      }));
+      setCards(defaultCards);
+      localStorage.setItem('bingo_cards', JSON.stringify(defaultCards));
+    }
+  }, []);
+
+  // 💾 Guardar en localStorage cada vez que cambian las tarjetas
+  useEffect(() => {
+    if (cards.length > 0) {
+      localStorage.setItem('bingo_cards', JSON.stringify(cards));
+    }
+  }, [cards]);
+
+  return (
+    <div className='font-pirataone min-h-screen relative'>
+      <img src={backgroundImg} alt="" className='absolute h-full object-cover object-right w-full' />
+      <div className='bg-black/60 h-full w-full absolute'></div>
+      <div className='max-w-xl mx-auto px-5 py-10 relative z-20'>
+        {/* Header */}
+        <div className='flex gap-5 items-center mb-5 text-white'>
+          <div className='flex-1'>
+            <h1 className='text-5xl'>BINGOMANIA</h1>
+            <p className='font-bold font-outfit text-xl'>#N72#022$177--&gt;PL1N</p>
+          </div>
+          <div className='h-20 relative w-20'>
+            <Tickets className='h-full w-full' strokeWidth={1} />
+            <span className='absolute inset-0 flex items-center justify-center mt-4 ml-3 text-xl'>30so</span>
+          </div>
+        </div>
+
+        {/* Premios */}
+        <div className='flex justify-around mb-5'>
+          {premios.map((premio, index) => (
+            <div key={index} className='flex flex-col items-center'>
+              <div className='h-8 w-8 text-yellow-500'>
+                <Gift className='h-full w-full' />
+              </div>
+              <p className='text-white text-xl'>+{premio}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Tarjetas */}
+        <div className='gap-1 grid grid-cols-3 mb-5 relative'>
+          {cards.map(card => (
+            <Card
+              key={card.id}
+              data={card}
+              openModal={openModal}
+              setOpenModal={setOpenModal}
+              setSelectedCard={setSelectedCard}
+            />
+          ))}
+        </div>
+
+        {/* Controles */}
+        <div className='flex gap-5 items-center justify-center'>
+          <div className="bg-[radial-gradient(circle,_rgba(30,64,175,1)_0%,_rgba(2,6,23,1)_80%)] flex h-20 w-20 items-center justify-center rounded-full">
+            <span className="font-black text-white text-5xl">1</span>
+          </div>
+          <button className='bg-blue-950 h-14 p-2 rounded-xl w-14'>
+            <Dice5 className='h-full text-white w-full' strokeWidth={1.5} />
+          </button>
+          <button
+            className='bg-blue-950 h-14 p-2 rounded-xl w-14'
+            onClick={() => {
+              localStorage.removeItem('bingo_cards');
+              window.location.reload();
+            }}
+          >
+            <RefreshCcw className='h-full text-white w-full' strokeWidth={1.5} />
+          </button>
+        </div>
+      </div>
+
+      {/* Modal */}
+      {openModal && selectedCard && (
+        <ModalCard
+          setOpenModal={setOpenModal}
+          selectedCard={selectedCard}
+          setCards={setCards}
+        />
+      )}
+    </div>
+  );
+};
+
+export default App;
+
+import React from 'react';
+import { Shield, Sparkle, Star, Coins, Gift } from 'lucide-react';
+
+const Card = ({ data, setOpenModal, setSelectedCard }) => {
+  const { id, nombre, pago, estrellas, premio } = data;
+
+  return (
+    <button
+      className="border-6 border-blue-100 cursor-pointer relative"
+      onClick={() => {
+        setSelectedCard(data);
+        setOpenModal(true);
+      }}
+    >
+      <div className="border-[3px] border-blue-950/80">
+        <div className={`${pago ? 'bg-yellow-400/50' : 'bg-blue-950/80'} flex h-12 justify-center relative w-full`}>
+          {/* ⭐ Estrellas */}
+          <div className='absolute flex flex-col z-10 left-0 px-1'>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star
+                key={i}
+                size={9}
+                className={i < estrellas ? 'fill-yellow-500 text-transparent' : 'text-transparent'}
+              />
+            ))}
+          </div>
+
+          {/* 🛡 Número */}
+          <div className="h-9 text-blue-200 relative w-9">
+            <Shield className='fill-blue-900 h-full w-full' strokeWidth={1} />
+            <span className='absolute inset-0 z-10 flex items-center justify-center font-pirataone text-white text-lg'>
+              {id}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* ✨ o 💰 según pago */}
+      {pago ? (
+        <>
+          <Coins className='absolute left-1/6 rotate-45 text-yellow-500 top-1/2 -translate-y-1/2' size={14} strokeWidth={2} />
+          <Coins className='absolute right-1/6 rotate-45 text-yellow-500 top-1/2 -translate-y-1/2' size={14} strokeWidth={2} />
+        </>
+      ) : (
+        <>
+          <Sparkle className='absolute fill-blue-200 left-1/6 rotate-45 text-blue-200 top-1/2 -translate-y-1/2' size={10} strokeWidth={2} />
+          <Sparkle className='absolute fill-blue-200 right-1/6 rotate-45 text-blue-200 top-1/2 -translate-y-1/2' size={10} strokeWidth={2} />
+        </>
+      )}
+
+      {/* 🎁 Premio si tiene */}
+      {premio !== null && (
+        <Gift
+          className='absolute -top-2 -right-2'
+          size={18}
+          strokeWidth={1.5}
+          color={premio >= 100 ? 'gold' : premio >= 50 ? 'orange' : 'violet'}
+        />
+      )}
+
+      {/* 🧍‍♂️ Nombre */}
+      <div className='bg-blue-900 absolute border border-blue-100 -bottom-[6px] h-[18px] left-1/2 -translate-x-1/2 w-16 overflow-hidden whitespace-nowrap px-1'>
+        <p className="text-center text-[12px] text-white truncate font-pirataone">
+          {nombre || 'Libre'}
+        </p>
+      </div>
+    </button>
+  );
+};
+
+export default Card;
+
+import React, { useState } from 'react'
+import { Sparkle, Shield, Coins, CircleCheck, CircleX } from 'lucide-react'
+
+const ModalCard = ({ setOpenModal, selectedCard, setCards }) => {
+
+    const [nombre, setNombre] = useState(selectedCard?.nombre)
+    const [pago, setPago] = useState(selectedCard?.pago);
+
+    const handleSave = () => {
+        setCards(prevCards => {
+            const updatedCards = prevCards.map(card =>
+                card.id === selectedCard.id
+                    ? { ...card, nombre, pago }
+                    : card
+            );
+            localStorage.setItem('cards', JSON.stringify(updatedCards));
+            return updatedCards;
+        });
+        setOpenModal(false);
+    };
+
+    return (
+        <div className='absolute backdrop-blur-xs flex flex-col gap-5 h-screen inset-0 items-center justify-center p-14 z-50'>
+            <div
+                className="border-6 border-blue-100 cursor-pointer relative w-full"
+            >
+                <div className="border-[3px] border-blue-950/80">
+                    <div className='bg-blue-950/80 flex h-28 justify-center w-full'>
+                        <div className="h-22 text-blue-200 relative w-22">
+                            <Shield className='fill-blue-900 h-full w-full' strokeWidth={1} />
+                            <span className='absolute inset-0 z-10 flex items-center justify-center font-pirataone text-white text-4xl'>
+                                {selectedCard?.id}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <button
+                    className={`absolute border-2 h-8 left-1/6 p-1 rotate-45 rounded-full ${pago ? 'text-blue-100' : 'text-yellow-500'} top-1/2 -translate-y-1/2 w-8`}
+                    onClick={() => {
+                        setPago(false)
+                    }}
+                >
+                    <Sparkle className='h-full w-full' />
+                </button>
+                <button
+                    className={`absolute border-2 h-8 right-1/6 p-1 rounded-full ${pago ? 'text-yellow-500' : 'text-blue-100'}  top-1/2 -translate-y-1/2 w-8`}
+                    onClick={() => {
+                        setPago(true)
+                    }}
+                >
+                    <Coins className='h-full w-full' />
+                </button>
+                <div className='bg-blue-900 absolute border border-blue-100 -bottom-[6px] flex items-center justify-center h-8 left-1/2 -translate-x-1/2 w-32 overflow-hidden px-1'>
+                    <input
+                        type="text"
+                        className="bg-transparent font-pirataone text-center text-2xl text-white w-full outline-none"
+                        value={nombre}
+                        onChange={(e) => setNombre(e.target.value)}
+                        placeholder="Nombre"
+                    />
+                </div>
+            </div>
+            <div className='flex gap-5'>
+                <button
+                    className='bg-blue-950 px-4 py-2 rounded-md'
+                    onClick={() => {
+                        setOpenModal(false)
+                    }}
+                >
+                    <CircleX className='bg-red-900/40 text-red-600 rounded-full' size={30} />
+                </button>
+                <button
+                    className='bg-blue-950 px-4 py-2 rounded-md'
+                    onClick={handleSave}
+                >
+                    <CircleCheck className='bg-green-900/40 text-green-600 rounded-full' size={30} />
+                </button>
+            </div>
+        </div>
+    )
+}
+
+export default ModalCard
