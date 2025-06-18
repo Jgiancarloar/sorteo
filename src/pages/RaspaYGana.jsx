@@ -89,7 +89,7 @@ const RaspaYGana = () => {
                     <h1 className="text-4xl font-bold">Gira y Gana 🎁</h1>
                     <div className='h-20 relative w-20'>
                         <Tickets className='h-full w-full' strokeWidth={1} />
-                        <span className='absolute inset-0 flex items-center justify-center mt-4 ml-3 text-xl'>30so</span>
+                        <span className='absolute inset-0 flex items-center justify-center mt-4 ml-3 text-xl'>10so</span>
                     </div>
                 </div>
                 <div className="flex gap-1 flex-wrap mb-5 justify-center">
