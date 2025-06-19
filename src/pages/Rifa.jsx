@@ -126,8 +126,7 @@ const Rifa = () => {
       <div className='max-w-xl mx-auto px-5 py-10 relative z-20'>
         <div className='flex gap-5 items-center mb-5 text-white'>
           <div className='flex-1'>
-            <h1 className='text-5xl'>BINGOMANIA</h1>
-            <p className='font-bold font-outfit text-xl'>#N72#022$177--&gt;PL1N</p>
+            <p className='font-bold font-outfit text-xl'>#N36#502$580</p>
           </div>
           <div className='h-20 relative w-20'>
             <Tickets className='h-full w-full' strokeWidth={1} />

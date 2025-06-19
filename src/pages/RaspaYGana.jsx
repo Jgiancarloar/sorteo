@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Bookmark, Gift, Tickets } from "lucide-react";
+import { Bookmark, Gift, Tickets, RefreshCcw } from "lucide-react";
 import backgroundImg from '../assets/background.webp'
 import logo from '../assets/logo.webp'
+import jorgesuspenso from '../assets/jorgesuspenso.png'
+import jorgetriste from '../assets/jorgetriste.png'
+import jorgitoganador from '../assets/jorgitoganador.png'
 
 const generateRandomCards = () => {
     const numbers = Array.from({ length: 9 }, (_, i) => i + 1).sort(() => Math.random() - 0.5);
@@ -69,7 +72,7 @@ const RaspaYGana = () => {
         // Paso 1: quitar flipped visualmente
         const hiddenCards = cards.map(card => ({ ...card, flipped: false }));
         setCards(hiddenCards);
-    
+
         // Paso 2: esperar el fin de la animación (500ms o lo que uses)
         setTimeout(() => {
             setCards(generateRandomCards());
@@ -78,18 +81,17 @@ const RaspaYGana = () => {
             localStorage.removeItem("bookmarks");
         }, 600); // asegúrate que este número sea mayor que la duración de la animación (por seguridad)
     };
-    
+
 
     return (
         <div className='font-pirataone min-h-screen relative'>
             <img src={backgroundImg} alt="" className='absolute h-full object-cover object-right w-full' />
             <div className='bg-black/60 h-full w-full absolute'></div>
             <div className="text-white flex flex-col items-center justify-center relative p-4 z-40">
-                <div className="flex items-center gap-5 mb-5">
-                    <h1 className="text-4xl font-bold">Gira y Gana 🎁</h1>
+                <div className="flex items-center justify-center gap-5 mb-5">
                     <div className='h-20 relative w-20'>
                         <Tickets className='h-full w-full' strokeWidth={1} />
-                        <span className='absolute inset-0 flex items-center justify-center mt-4 ml-3 text-xl'>10so</span>
+                        <span className='absolute inset-0 flex items-center justify-center mt-4 ml-3 text-xl'>20so</span>
                     </div>
                 </div>
                 <div className="flex gap-1 flex-wrap mb-5 justify-center">
@@ -117,16 +119,17 @@ const RaspaYGana = () => {
                 <div className="flex gap-5 justify-center mb-5 p-2 bg-black/40 rounded-lg">
                     <div className="flex items-center gap-2">
                         <Gift className="h-10 w-10" color="#EF4444" />
-                        <span className="text-2xl">+35</span>
+                        <span className="text-2xl">+70</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <Gift className="h-10 w-10" color="#3B82F6" />
-                        <span className="text-2xl">+20</span>
+                        <span className="text-2xl">+50</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <Gift className="h-10 w-10" color="#22C55E" />
-                        <span className="text-2xl">+15</span>
+                        <span className="text-2xl">+30</span>
                     </div>
+
                 </div>
 
                 <div className="grid grid-cols-3 gap-4 mb-6">
@@ -134,7 +137,7 @@ const RaspaYGana = () => {
                         <div
                             key={i}
                             onClick={() => flipCard(i)}
-                            className="w-24 h-24 relative"
+                            className="w-24 h-24 relative cursor-pointer"
                             style={{ perspective: "1000px" }}
                         >
                             <div
@@ -142,20 +145,39 @@ const RaspaYGana = () => {
                                     }`}
                             >
                                 {/* Cara trasera (lo visible al inicio) */}
-                                <div className="absolute inset-0 bg-yellow-600 rounded-lg backface-hidden flex items-center justify-center overflow-hidden">
-                                    <img src={logo} alt="" />
+                                <div className="absolute inset-0 bg-[#FEF6D6] rounded-lg backface-hidden flex items-center justify-center overflow-hidden">
+                                    <img src={jorgesuspenso} alt="" className="w-5/6 mt-auto" />
                                 </div>
 
                                 {/* Cara frontal (número y gift) */}
-                                <div className="absolute inset-0 bg-black/40 text-white rounded-lg flex items-center justify-center transform rotate-y-180 backface-hidden text-5xl font-bold">
-                                    {card.number}
+                                <div
+                                    className={`absolute inset-0 rounded-lg transform rotate-y-180 backface-hidden overflow-hidden`}
+                                >
+                                    {/* Capa de fondo con opacidad */}
                                     {card.gift && (
-                                        <Gift
-                                            className="absolute top-1/2 -translate-y-1/2 right-1/2 translate-x-1/2 h-14 w-14 -z-10"
-                                            color={card.gift}
+                                        <div
+                                            className="absolute inset-0"
+                                            style={{
+                                                backgroundColor: card.gift,
+                                                opacity: 0.4,
+                                            }}
                                         />
                                     )}
+
+                                    {/* Imagen + número encima */}
+                                    <div
+                                        className={`absolute inset-0 flex items-start justify-end p-2 text-4xl font-bold text-white ${card.gift ? '' : 'bg-black/40 filter grayscale'}`}
+                                        style={{
+                                            backgroundImage: `url(${card.gift ? jorgitoganador : jorgetriste})`,
+                                            backgroundSize: 'cover',
+                                            backgroundPosition: 'center',
+                                        }}
+                                    >
+                                        {card.number}
+                                    </div>
                                 </div>
+
+
                             </div>
                         </div>
                     ))}
@@ -163,9 +185,9 @@ const RaspaYGana = () => {
 
                 <button
                     onClick={resetAll}
-                    className="bg-red-700 px-4 py-2 rounded hover:bg-red-700 transition"
+                    className="bg-red-700 cursor-pointer px-4 py-2 rounded hover:bg-red-700 transition"
                 >
-                    Reiniciar juego
+                    <RefreshCcw />
                 </button>
 
                 {/* Modal */}
