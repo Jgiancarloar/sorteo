@@ -8,10 +8,10 @@ import jorgitoganador from '../assets/jorgitoganador.png'
 
 const generateRandomCards = () => {
     const numbers = Array.from({ length: 9 }, (_, i) => i + 1).sort(() => Math.random() - 0.5);
-    const giftColors = ["#EF4444", "#3B82F6", "#22C55E"];
+    const giftColors = ["#EF4444", "#3B82F6", "#22C55E", "#F97316", "#8B5CF6"];
     const giftIndexes = [];
 
-    while (giftIndexes.length < 3) {
+    while (giftIndexes.length < 5) {
         const index = Math.floor(Math.random() * 9);
         if (!giftIndexes.includes(index)) giftIndexes.push(index);
     }
@@ -117,27 +117,33 @@ const RaspaYGana = () => {
                     ))}
                 </div>
                 <div className="flex gap-5 justify-center mb-5 p-2 bg-black/40 rounded-lg">
-                    <div className="flex items-center gap-2">
-                        <Gift className="h-10 w-10" color="#EF4444" />
-                        <span className="text-2xl">+70</span>
+                    <div className="flex flex-col items-center gap-2">
+                        <Gift className="h-8 w-8" color="#EF4444" />
+                        <span className="text-xl">+40</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <Gift className="h-10 w-10" color="#3B82F6" />
-                        <span className="text-2xl">+50</span>
+                    <div className="flex flex-col items-center gap-2">
+                        <Gift className="h-8 w-8" color="#3B82F6" />
+                        <span className="text-xl">+40</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <Gift className="h-10 w-10" color="#22C55E" />
-                        <span className="text-2xl">+30</span>
+                    <div className="flex flex-col items-center gap-2">
+                        <Gift className="h-8 w-8" color="#22C55E" />
+                        <span className="text-xl">+30</span>
                     </div>
-
+                    <div className="flex flex-col items-center gap-2">
+                        <Gift className="h-8 w-8" color="#F97316" />
+                        <span className="text-xl">+30</span>
+                    </div>
+                    <div className="flex flex-col items-center gap-2">
+                        <Gift className="h-8 w-8" color="#8B5CF6" />
+                        <span className="text-xl">+20</span>
+                    </div>
                 </div>
-
                 <div className="grid grid-cols-3 gap-4 mb-6">
                     {cards.map((card, i) => (
                         <div
                             key={i}
                             onClick={() => flipCard(i)}
-                            className="w-24 h-24 relative cursor-pointer"
+                            className="w-20 h-20 relative cursor-pointer"
                             style={{ perspective: "1000px" }}
                         >
                             <div
