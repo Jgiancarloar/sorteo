@@ -91,7 +91,7 @@ const RaspaYGana = () => {
                 <div className="flex items-center justify-center gap-5 mb-5">
                     <div className='h-20 relative w-20'>
                         <Tickets className='h-full w-full' strokeWidth={1} />
-                        <span className='absolute inset-0 flex items-center justify-center mt-4 ml-3 text-xl'>20so</span>
+                        <span className='font-sans absolute inset-0 flex items-center justify-center mt-4 ml-3 text-xl'>20so</span>
                     </div>
                 </div>
                 <div className="flex gap-1 flex-wrap mb-5 justify-center">
