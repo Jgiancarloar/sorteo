@@ -8,7 +8,7 @@ import jorgitoganador from '../assets/jorgitoganador.png'
 
 const generateRandomCards = () => {
     const numbers = Array.from({ length: 9 }, (_, i) => i + 1).sort(() => Math.random() - 0.5);
-    const giftColors = ["#EF4444", "#3B82F6", "#22C55E", "#F97316", "#8B5CF6"];
+    const giftColors = ["#EF4444", "#3B82F6", "#3B82F6", "#3B82F6", "#22C55E"];
     const giftIndexes = [];
 
     while (giftIndexes.length < 5) {
@@ -87,12 +87,17 @@ const RaspaYGana = () => {
         <div className='font-pirataone min-h-screen relative'>
             <img src={backgroundImg} alt="" className='absolute h-full object-cover object-right w-full' />
             <div className='bg-black/60 h-full w-full absolute'></div>
-            <div className="text-white flex flex-col items-center justify-center relative p-4 z-40">
+            <div className="text-white flex flex-col items-center justify-center relative px-4 pt-10 z-40">
                 <div className="flex items-center justify-center gap-5 mb-5">
-                    <div className='h-20 relative w-20'>
-                        <Tickets className='h-full w-full' strokeWidth={1} />
-                        <span className='font-sans absolute inset-0 flex items-center justify-center mt-4 ml-3 text-xl'>20so</span>
-                    </div>
+
+                    <span className='font-san text-4xl'>10so</span>
+                    <button
+                        onClick={resetAll}
+                        className="bg-red-700 cursor-pointer px-4 py-2 rounded hover:bg-red-700 transition"
+                    >
+                        <RefreshCcw />
+                    </button>
+
                 </div>
                 <div className="flex gap-1 flex-wrap mb-5 justify-center">
                     {bookmarks.map((bookmark, i) => (
@@ -119,31 +124,31 @@ const RaspaYGana = () => {
                 <div className="flex gap-5 justify-center mb-5 p-2 bg-black/40 rounded-lg">
                     <div className="flex flex-col items-center gap-2">
                         <Gift className="h-8 w-8" color="#EF4444" />
-                        <span className="text-xl">+40</span>
+                        <span className="text-xl">+30</span>
                     </div>
                     <div className="flex flex-col items-center gap-2">
                         <Gift className="h-8 w-8" color="#3B82F6" />
-                        <span className="text-xl">+40</span>
+                        <span className="text-xl">+20</span>
                     </div>
                     <div className="flex flex-col items-center gap-2">
                         <Gift className="h-8 w-8" color="#22C55E" />
-                        <span className="text-xl">+30</span>
+                        <span className="text-xl">+10</span>
                     </div>
                     <div className="flex flex-col items-center gap-2">
-                        <Gift className="h-8 w-8" color="#F97316" />
-                        <span className="text-xl">+30</span>
+                        <Gift className="h-8 w-8" color="#22C55E" />
+                        <span className="text-xl">+10</span>
                     </div>
                     <div className="flex flex-col items-center gap-2">
-                        <Gift className="h-8 w-8" color="#8B5CF6" />
-                        <span className="text-xl">+20</span>
+                        <Gift className="h-8 w-8" color="#22C55E" />
+                        <span className="text-xl">+10</span>
                     </div>
                 </div>
-                <div className="grid grid-cols-3 gap-4 mb-6">
+                <div className="grid grid-cols-3 gap-2 mb-6">
                     {cards.map((card, i) => (
                         <div
                             key={i}
                             onClick={() => flipCard(i)}
-                            className="w-20 h-20 relative cursor-pointer"
+                            className="w-24 h-24 relative cursor-pointer"
                             style={{ perspective: "1000px" }}
                         >
                             <div
@@ -189,12 +194,6 @@ const RaspaYGana = () => {
                     ))}
                 </div>
 
-                <button
-                    onClick={resetAll}
-                    className="bg-red-700 cursor-pointer px-4 py-2 rounded hover:bg-red-700 transition"
-                >
-                    <RefreshCcw />
-                </button>
 
                 {/* Modal */}
                 {modalIndex !== null && (
