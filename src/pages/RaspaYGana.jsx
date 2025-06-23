@@ -127,19 +127,19 @@ const RaspaYGana = () => {
                         <span className="text-xl">+30</span>
                     </div>
                     <div className="flex flex-col items-center gap-2">
-                        <Gift className="h-8 w-8" color="#3B82F6" />
+                        <Gift className="h-8 w-8" color="#22C55E" />
                         <span className="text-xl">+20</span>
                     </div>
                     <div className="flex flex-col items-center gap-2">
-                        <Gift className="h-8 w-8" color="#22C55E" />
+                        <Gift className="h-8 w-8" color="#3B82F6" />
                         <span className="text-xl">+10</span>
                     </div>
                     <div className="flex flex-col items-center gap-2">
-                        <Gift className="h-8 w-8" color="#22C55E" />
+                        <Gift className="h-8 w-8" color="#3B82F6" />
                         <span className="text-xl">+10</span>
                     </div>
                     <div className="flex flex-col items-center gap-2">
-                        <Gift className="h-8 w-8" color="#22C55E" />
+                        <Gift className="h-8 w-8" color="#3B82F6" />
                         <span className="text-xl">+10</span>
                     </div>
                 </div>
